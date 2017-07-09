@@ -7,24 +7,10 @@ module Autoscaler
     # @param [String] type process type this scaler controls
     # @param [String] token Heroku OAuth access token
     # @param [String] app Heroku app name
-    def initialize(
-        type = 'worker',
-        token = ENV['AUTOSCALER_HEROKU_ACCESS_TOKEN'],
-        app = ENV['AUTOSCALER_HEROKU_APP'])
-
-      if (token.nil? && ENV['HEROKU_ACCESS_TOKEN'])
-        warn "Autoscaler: ENV AUTOSCALER_HEROKU_ACCESS_TOKEN is now preferred, HEROKU_ACCESS_TOKEN may be removed in a future release"
-        token = ENV['HEROKU_ACCESS_TOKEN']
-      end
-      if (app.nil? && ENV['HEROKU_APP'])
-        warn "Autoscaler: ENV AUTOSCALER_HEROKU_APP is now preferred, HEROKU_APP may be removed in a future release"
-        app = ENV['HEROKU_APP']
-      end
-
-      @client = PlatformAPI.connect_oauth(token)
-      @type = type
-      @app = app
+    def initialize(type: 'worker', token: ENV['AUTOSCALER_HEROKU_ACCESS_TOKEN'], app: ENV['AUTOSCALER_HEROKU_APP'])
+      @type, @app = type, app
       @workers = CounterCacheMemory.new
+      @client = PlatformAPI.connect_oauth(token)
     end
 
     attr_reader :app
